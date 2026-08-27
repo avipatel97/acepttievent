@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMRA TTI Master Trackboard // 2028 LA Olympics Disaster Simulation</title>
+  <meta name="description" content="Official Digital Trackboard & Health Tech Simulation for the EMRA TTI Committee at ACEP26 Master the Disaster. Features 8 diverse casualty cases from the 2028 LA Olympics earthquake scenario and 40 real clinical technologies.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Master Header Bar -->
+  <header>
+    <div class="brand-section">
+      <div class="brand-logo">TTI</div>
+      <div class="brand-title">
+        <h1>MASTER TRACKBOARD</h1>
+        <span>2028 LA OLYMPICS DISASTER SIMULATION</span>
+      </div>
+    </div>
+
+    <div class="trackboard-summary">
+      <div class="track-item">
+        <span class="track-label">PARTICIPATING TEAM</span>
+        <span class="track-value" id="team-name-display" style="color: var(--accent-cyan);">Team Alpha</span>
+      </div>
+      <div class="track-item">
+        <span class="track-label">ED CAPACITY</span>
+        <span class="track-value">8 BEDS</span>
+      </div>
+    </div>
+
+    <div class="timer-widget" id="timer-widget">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <span class="timer-display" id="timer-display">10:00</span>
+    </div>
+  </header>
+
+  <!-- App Workspace -->
+  <div class="app-container">
+    
+    <!-- Left Sidebar: Trackboard & History Log -->
+    <div class="sidebar">
+      <div>
+        <div class="sidebar-title">
+          MASTER TRACKBOARD
+          <span style="font-size: 0.7rem; color: var(--accent-cyan); font-family: monospace;">LIVE ED</span>
+        </div>
+        <div class="trackboard-list" id="trackboard-list">
+          <!-- Dynamically populated by game.js -->
+        </div>
+      </div>
+
+      <div>
+        <div class="sidebar-title">
+          DEPLOYED TECH LOG
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-family: monospace;">HISTORY</span>
+        </div>
+
+        <div class="history-box" id="history-list">
+          <!-- Dynamically populated by game.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Stage: Active Patient Station & 5 Options -->
+    <div class="stage-viewport" id="stage-viewport">
+      <!-- Patient Station Card injected by game.js -->
+    </div>
+
+  </div>
+
+  <!-- Welcome / Instructions Modal -->
+  <div class="modal-overlay" id="instructions-modal">
+    <div class="instructions-card">
+      <h2>EMRA TTI COMMITTEE STATION</h2>
+      <div class="instructions-subtitle">ACEP26 MASTER THE DISASTER // 2028 LA OLYMPICS EARTHQUAKE</div>
+
+      <p style="font-size: 0.95rem; line-height: 1.55; color: #cbd5e1;">
+        A major 8.1 magnitude earthquake has struck Los Angeles during the <strong>2028 Olympic Games</strong>. Your emergency team must triage and deploy health technologies across <strong>8 diverse casualty stations</strong> from venues across the city.
+      </p>
+
+      <div class="rules-list">
+        <div class="rule-item">
+          <strong>1. 10-Minute Shift Timer:</strong> You have <strong>10 MINUTES TOTAL</strong> to work through all 8 casualty cases. The timer runs continuously in the top right.
+        </div>
+        <div class="rule-item">
+          <strong>2. Diverse Olympic Disaster Cases:</strong> Evaluate raw clinical presentations across crush injuries, penetrating blast trauma, cardiac arrest, obstetric emergencies, burn inhalation, pediatric fractures, and severe submersion.
+        </div>
+        <div class="rule-item">
+          <strong>3. Diverse Health Technologies:</strong> Choose from 40 real-world tools including clinical calculators (MDCalc), autonomous hospital robotics (Moxi, Aethon TUG, LUCAS), telemedicine links, AI ultrasound, and point-of-care analyzers.
+        </div>
+        <div class="rule-item">
+          <strong>4. Clickable Tool Links:</strong> Click <strong>"Device Website ↗"</strong> on any card to explore the specific product website. Links remain interactive throughout.
+        </div>
+        <div class="rule-item">
+          <strong>5. Deployment Briefs & Debrief:</strong> Deploying a tool locks your choice and reveals a technology deployment brief. A master debrief profile is generated at the end.
+        </div>
+      </div>
+
+      <div class="team-input-group">
+        <label for="team-name-input">ENTER YOUR TEAM / RESIDENCY NAME:</label>
+        <input type="text" id="team-name-input" class="team-input" value="Team Alpha" placeholder="e.g. EM Residency Team 1">
+      </div>
+
+      <button class="submit-decision-btn" id="btn-start-sim" style="align-self: center; width: 100%; text-align: center; font-size: 1rem; padding: 14px;">
+        START 10-MIN DISASTER SIMULATION
+      </button>
+    </div>
+  </div>
+
+  <!-- End-of-Activity Debrief Modal -->
+  <div class="modal-overlay hidden" id="debrief-modal">
+    <div class="debrief-card" id="debrief-content-area">
+      <!-- Generated by game.js finishSimulation() -->
+    </div>
+  </div>
+
+  <!-- Load Web Scripts -->
+  <script src="sound.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
