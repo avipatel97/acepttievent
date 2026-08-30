@@ -8,7 +8,7 @@ const PATIENT_STATIONS = [
     id: 1,
     bed: 'BED 01',
     venue: 'Gymnastics Arena (Pauley Pavilion)',
-    name: '28M Crush Injury',
+    name: '28M — Crush',
     title: '28M Trapped Under Fallen Steel Truss',
     vitals: ['BP: 104/68', 'HR: 112', 'SpO2: 97%'],
     prompt: '28-year-old venue volunteer extricated after 3 hours pinned beneath a steel roof truss. Right forearm compartments are tense and firm; passive finger extension elicits severe pain. Foley drains dark burgundy urine.',
@@ -51,7 +51,7 @@ const PATIENT_STATIONS = [
     id: 2,
     bed: 'BED 02',
     venue: 'Olympic Village Utility Hub',
-    name: '31F Penetrating Shrapnel',
+    name: '31F — Shrapnel',
     title: '31F Shrapnel to Right Flank & Chest',
     vitals: ['BP: 76/40', 'HR: 138', 'SpO2: 90%'],
     prompt: '31-year-old official struck by metal shrapnel from a ruptured gas line. 4cm puncture wound over right flank; diminished breath sounds right hemithorax. Restless, pale, diffuse abdominal rigidity.',
@@ -94,7 +94,7 @@ const PATIENT_STATIONS = [
     id: 3,
     bed: 'BED 03',
     venue: 'SoFi Stadium (Olympic Stadium)',
-    name: '64M Sudden Cardiac Arrest',
+    name: '64M — Cardiac Arrest',
     title: '64M Pulseless Ventricular Fibrillation',
     vitals: ['BP: 0/0', 'HR: 0 (VFib)', 'SpO2: Unobtainable'],
     prompt: '64-year-old spectator collapses during stadium evacuation. Arrives pulseless and apneic. Cardiac monitor: coarse Ventricular Fibrillation.',
@@ -137,7 +137,7 @@ const PATIENT_STATIONS = [
     id: 4,
     bed: 'BED 04',
     venue: 'LA Live Aquatics Center',
-    name: '29F Pregnant — Lighting Truss Strike',
+    name: '29F — OB Trauma',
     title: '29F Pregnant (30w) — Uterine Tenderness & Shock',
     vitals: ['BP: 74/42', 'HR: 134', 'SpO2: 94%'],
     prompt: '29-year-old spectator at 30 weeks gestation struck across the abdomen by a fallen metal lighting fixture. Uterine tenderness with frequent contractions, moderate vaginal bleeding, faint fetal heart tones. No OBGYN on site.',
@@ -180,7 +180,7 @@ const PATIENT_STATIONS = [
     id: 5,
     bed: 'BED 05',
     venue: '7th St/Metro Center Subway Station',
-    name: '22F Acute Dyspnea & Hand Spasms',
+    name: '22F — Dyspnea',
     title: '22F Acute Hyperventilation & Carpopedal Spasms',
     vitals: ['BP: 136/84', 'HR: 126', 'RR: 36', 'SpO2: 99%'],
     prompt: '22-year-old athlete evacuated from a smoke-filled subway tunnel. Severe shortness of breath, lightheadedness, and bilateral hand cramping. Lungs completely clear bilaterally on auscultation.',
@@ -223,7 +223,7 @@ const PATIENT_STATIONS = [
     id: 6,
     bed: 'BED 06',
     venue: 'Dignity Health Sports Park Velodrome',
-    name: '45M 55% Burns & Inhalation',
+    name: '45M — Burns',
     title: '45M Circumferential Burns & Airway Inhalation Injury',
     vitals: ['BP: 98/60', 'HR: 120', 'SpO2: 95%', 'Temp: 35.4°C'],
     prompt: '45-year-old technician caught in a diesel fuel flash fire. 55% TBSA charred, leathery circumferential burns across torso and both arms. Singed facial hair, carbonaceous sputum, and hoarse voice on exam.',
@@ -266,7 +266,7 @@ const PATIENT_STATIONS = [
     id: 7,
     bed: 'BED 07',
     venue: 'Exposition Park Fan Zone',
-    name: '7F Open Femur Fracture',
+    name: '7F — Femur Fx',
     title: '7F Open Femur Fracture & Hemorrhagic Shock',
     vitals: ['BP: 82/50', 'HR: 152', 'SpO2: 95%', 'Temp: 36.1°C'],
     prompt: '7-year-old child injured in a temporary bleacher collapse. Right mid-shaft open femur fracture with bone protrusion and active arterial bleeding. Pale, lethargic, capillary refill > 4 seconds.',
@@ -309,7 +309,7 @@ const PATIENT_STATIONS = [
     id: 8,
     bed: 'BED 08',
     venue: 'Long Beach Marine Stadium',
-    name: '73M Submersion & Hypothermia',
+    name: '73M — Hypothermia',
     title: '73M Harbor Submersion — Severe Hypothermia',
     vitals: ['BP: 78/48', 'HR: 42 (Brady)', 'SpO2: 86%', 'Core Temp: 29.2°C'],
     prompt: '73-year-old spectator rescued after 15 minutes submerged following a floating dock collapse. Unresponsive, GCS 4, profound peripheral cyanosis, no shivering, distant heart sounds.',
@@ -353,10 +353,10 @@ const PATIENT_STATIONS = [
 class TTISimulationEngine {
   constructor() {
     this.stations = PATIENT_STATIONS;
-    this.teamName = 'Team Alpha';
+    // Removed team name – not used in UI
     this.currentStationIdx = 0;
     this.patientResults = [];
-    this.selectedOptionId = null;
+    this.selectedOptionIds = [];
     this.isDeployed = false;
 
     this.totalTimerSeconds = 600;
@@ -370,11 +370,9 @@ class TTISimulationEngine {
   initDOM() {
     this.welcomeModal = document.getElementById('instructions-modal');
     this.debriefModal = document.getElementById('debrief-modal');
-    this.teamInput = document.getElementById('team-name-input');
     this.startBtn = document.getElementById('btn-start-sim');
     this.timerDisplay = document.getElementById('timer-display');
     this.timerWidget = document.getElementById('timer-widget');
-    this.teamNameDisplay = document.getElementById('team-name-display');
     this.trackboardContainer = document.getElementById('trackboard-list');
     this.historyContainer = document.getElementById('history-list');
     this.stageViewport = document.getElementById('stage-viewport');
@@ -382,9 +380,7 @@ class TTISimulationEngine {
 
   bindEvents() {
     this.startBtn.addEventListener('click', () => {
-      const inputVal = this.teamInput.value.trim();
-      if (inputVal) this.teamName = inputVal;
-      this.teamNameDisplay.innerText = this.teamName;
+      // Hide the instructions modal and start the simulation
       this.welcomeModal.classList.add('hidden');
       Sound.init();
       Sound.playClick();
@@ -446,8 +442,8 @@ class TTISimulationEngine {
       return;
     }
     this.currentStationIdx = idx;
-    this.selectedOptionId = null;
-    this.isDeployed = false;
+    this.selectedOptionIds = [];
+    this.isDeployed = !!this.patientResults[idx];
     this.renderTrackboard();
     this.renderHistory();
     this.renderStationCard(this.stations[idx]);
@@ -457,18 +453,29 @@ class TTISimulationEngine {
     this.trackboardContainer.innerHTML = '';
     this.stations.forEach((st, idx) => {
       const row = document.createElement('div');
-      let statusClass = 'pending', statusText = 'Pending';
+      let statusClass = 'pending', statusText = 'PENDING', pillClass = 'pending';
 
       const result = this.patientResults[idx];
-      if (result) { statusClass = 'deployed'; statusText = 'DONE'; }
-      else if (idx === this.currentStationIdx) { statusClass = 'active-row'; statusText = 'ACTIVE'; }
+      if (result) { statusClass = 'deployed'; statusText = 'DONE'; pillClass = 'deployed'; }
+      else if (idx === this.currentStationIdx) { statusClass = 'active'; statusText = 'ACTIVE'; pillClass = 'active-row'; }
 
-      row.className = `track-row ${idx === this.currentStationIdx ? 'active' : ''} ${result ? 'completed' : ''}`;
+      row.className = `track-row ${statusClass}`;
+      row.style.cursor = 'pointer';
       row.innerHTML = `
         <span class="track-bed">${st.bed}</span>
-        <span class="track-patient-name" title="${st.name}">${st.name}</span>
-        <span class="track-status-pill ${statusClass}">${statusText}</span>
+        <span class="track-patient-name">${st.name}</span>
+        <span class="track-status-pill ${pillClass}">${statusText}</span>
       `;
+      // Allow user to click any row to view that case
+      row.addEventListener('click', () => {
+        // Load the selected case without resetting overall state
+        this.currentStationIdx = idx;
+        this.selectedOptionIds = [];
+        this.isDeployed = this.patientResults[idx] ? true : false;
+        this.renderStationCard(st);
+        this.renderTrackboard();
+        this.renderHistory();
+      });
       this.trackboardContainer.appendChild(row);
     });
   }
@@ -487,13 +494,15 @@ class TTISimulationEngine {
           <span class="history-bed">${this.stations[idx].bed}</span>
           <span class="track-status-pill deployed" style="font-size: 0.6rem;">DONE</span>
         </div>
-        <div class="history-tool">${res.techUsed}</div>
+        <div class="history-tool">${Array.isArray(res.techUsed) ? res.techUsed.join(', ') : res.techUsed}</div>
       `;
       this.historyContainer.appendChild(item);
     });
   }
 
   renderStationCard(st) {
+    const priorResult = this.patientResults[this.currentStationIdx];
+
     this.stageViewport.innerHTML = `
       <div class="patient-card">
         <div class="patient-header">
@@ -510,24 +519,9 @@ class TTISimulationEngine {
 
         <div class="patient-prompt-box">${st.prompt}</div>
 
-        <div class="options-section-title">SELECT 1 TECHNOLOGY TO DEPLOY:</div>
+        <div class="options-section-title">SELECT TECHNOLOGY TO DEPLOY:</div>
 
         <div class="options-list">
-          ${st.options.map(opt => `
-            <div class="option-card" data-opt-id="${opt.id}">
-              <div class="option-icon-box">${opt.icon || '🩺'}</div>
-              <div class="option-radio"></div>
-              <div class="option-content">
-                <div class="option-header-row">
-                  <div class="option-name">${opt.name}</div>
-                  <a href="${opt.url}" target="_blank" rel="noopener noreferrer" class="option-website-link" onclick="event.stopPropagation();">
-                    Tech Tool Website ↗
-                  </a>
-                </div>
-                <div class="option-desc">${opt.desc}</div>
-              </div>
-            </div>
-          `).join('')}
         </div>
 
         <div style="display: flex; justify-content: flex-end; margin-top: 4px;" id="action-btn-container">
@@ -540,29 +534,104 @@ class TTISimulationEngine {
       </div>
     `;
 
-    document.querySelectorAll('.option-card').forEach(card => {
-      card.addEventListener('click', () => {
-        if (this.isDeployed) return;
-        Sound.playClick();
-        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        this.selectedOptionId = card.dataset.optId;
-        const btn = document.getElementById('btn-submit-decision');
-        if (btn) btn.disabled = false;
-      });
-    });
+    // Render option cards
+    const optionsSection = document.querySelector('.options-list');
+    if (optionsSection) {
+      optionsSection.innerHTML = st.options.map(opt => `
+        <div class="option-card${priorResult && priorResult.techUsed.includes(opt.name) ? ' selected locked' : (priorResult ? ' locked' : '')}" data-opt-id="${opt.id}">
+          <div class="option-icon-box">${opt.icon || '🩺'}</div>
+          <div class="option-radio"></div>
+          <div class="option-content">
+            <div class="option-header-row">
+              <div class="option-name">${opt.name}</div>
+              <a href="${opt.url}" target="_blank" rel="noopener noreferrer" class="option-website-link" onclick="event.stopPropagation();">Tech Tool Website ↗</a>
+            </div>
+            <div class="option-desc">${opt.desc}</div>
+          </div>
+        </div>
+      `).join('');
 
-    document.getElementById('btn-submit-decision').addEventListener('click', () => {
-      this.evaluateDecision();
+      if (priorResult) {
+        // Case already deployed — restore the outcome box, hide deploy btn
+        const btnContainer = document.getElementById('action-btn-container');
+        if (btnContainer) btnContainer.style.display = 'none';
+        this._showOutcomeBox(priorResult.techUsed.map(name => st.options.find(o => o.name === name)).filter(Boolean));
+      } else {
+        // Fresh case — attach click listeners
+        document.querySelectorAll('.option-card').forEach(card => {
+          card.addEventListener('click', () => {
+            if (this.isDeployed) return;
+            const optId = card.dataset.optId;
+            const idx = this.selectedOptionIds.indexOf(optId);
+            if (idx >= 0) {
+              this.selectedOptionIds.splice(idx, 1);
+              card.classList.remove('selected');
+            } else {
+              this.selectedOptionIds.push(optId);
+              card.classList.add('selected');
+            }
+            const btn = document.getElementById('btn-submit-decision');
+            if (btn) btn.disabled = this.selectedOptionIds.length === 0;
+          });
+        });
+
+        // Deploy button
+        const deployBtn = document.getElementById('btn-submit-decision');
+        if (deployBtn) {
+          deployBtn.addEventListener('click', () => { this.evaluateDecision(); });
+        }
+      }
+    }
+  }
+
+  // Helper: render the outcome box (used both on fresh deploy and on revisit)
+  _showOutcomeBox(selectedOpts) {
+    const allDone = this.patientResults.filter(r => r && Array.isArray(r.techUsed) && r.techUsed.length > 0).length === this.stations.length;
+    const btnLabel = allDone ? 'VIEW MASTER DEBRIEF →' : 'NEXT CASE →';
+
+    const outcomesHtml = selectedOpts.map(opt => `
+      <div class="outcome-item">
+        <div class="outcome-header">${opt.name}</div>
+        <div class="outcome-body">${opt.impact}</div>
+      </div>`).join('');
+
+    const container = document.getElementById('outcome-container');
+    if (!container) return;
+    container.innerHTML = `
+      <div class="outcome-reveal-box">
+        <div class="outcome-header">DEPLOYMENT BRIEF</div>
+        ${outcomesHtml}
+        <button class="next-station-btn" id="btn-next-station">${btnLabel}</button>
+      </div>
+    `;
+
+    document.getElementById('btn-next-station').addEventListener('click', () => {
+      Sound.playClick();
+      if (allDone) {
+        this.finishSimulation();
+      } else {
+        // Advance to next undeployed station
+        let next = (this.currentStationIdx + 1) % this.stations.length;
+        while (this.patientResults[next] && next !== this.currentStationIdx) {
+          next = (next + 1) % this.stations.length;
+        }
+        this.currentStationIdx = next;
+        this.selectedOptionIds = [];
+        this.isDeployed = !!this.patientResults[next];
+        this.renderStation(next);
+      }
     });
   }
 
+
   evaluateDecision() {
-    if (!this.selectedOptionId || this.isDeployed) return;
+    if (this.selectedOptionIds.length === 0 || this.isDeployed) return;
 
     const st = this.stations[this.currentStationIdx];
-    const opt = st.options.find(o => o.id === this.selectedOptionId);
-    if (!opt) return;
+    const selectedOpts = this.selectedOptionIds
+      .map(id => st.options.find(o => o.id === id))
+      .filter(opt => opt);
+    if (selectedOpts.length === 0) return;
 
     this.isDeployed = true;
     Sound.playStabilized();
@@ -570,12 +639,13 @@ class TTISimulationEngine {
     // Lock cards — but links stay clickable via CSS pointer-events on .option-website-link
     document.querySelectorAll('.option-card').forEach(card => card.classList.add('locked'));
 
+    // Record multiple selections
     this.patientResults[this.currentStationIdx] = {
       stationId: st.id,
       stationName: st.name,
-      techUsed: opt.name,
-      impact: opt.impact,
-      url: opt.url
+      techUsed: selectedOpts.map(o => o.name),
+      impact: selectedOpts.map(o => o.impact),
+      url: selectedOpts.map(o => o.url)
     };
 
     this.renderTrackboard();
@@ -584,21 +654,7 @@ class TTISimulationEngine {
     const btnContainer = document.getElementById('action-btn-container');
     if (btnContainer) btnContainer.style.display = 'none';
 
-    const container = document.getElementById('outcome-container');
-    container.innerHTML = `
-      <div class="outcome-reveal-box">
-        <div class="outcome-header">DEPLOYMENT BRIEF — ${opt.name}</div>
-        <div class="outcome-body">${opt.impact}</div>
-        <button class="next-station-btn" id="btn-next-station">
-          ${this.currentStationIdx === this.stations.length - 1 ? 'VIEW MASTER DEBRIEF →' : 'NEXT CASE →'}
-        </button>
-      </div>
-    `;
-
-    document.getElementById('btn-next-station').addEventListener('click', () => {
-      Sound.playClick();
-      this.renderStation(this.currentStationIdx + 1);
-    });
+    this._showOutcomeBox(selectedOpts);
   }
 
   handleGlobalTimeout() {
@@ -617,22 +673,18 @@ class TTISimulationEngine {
     this.finishSimulation(true);
   }
 
-  finishSimulation(isTimeout = false) {
-    this.simulationActive = false;
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    Sound.playStabilized();
-
+  finishSimulation() {
     const timeUsedSeconds = 600 - Math.max(0, this.totalTimerSeconds);
     const timeMins = Math.floor(timeUsedSeconds / 60);
     const timeSecs = timeUsedSeconds % 60;
     const timeUsedStr = `${timeMins}m ${timeSecs}s`;
-    const completedCount = this.patientResults.filter(r => !r.techUsed.includes('Expired')).length;
+    const completedCount = this.patientResults.filter(r => Array.isArray(r.techUsed) ? r.techUsed.length > 0 : !r.techUsed.includes('Expired')).length;
 
     document.getElementById('debrief-content-area').innerHTML = `
       <div class="debrief-header">
         <h2>MASTER SIMULATION DEBRIEF</h2>
         <p style="color: var(--accent-amber); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">
-          2028 LA OLYMPICS EARTHQUAKE RESPONSE // TEAM: ${this.teamName.toUpperCase()}
+          2028 LA OLYMPICS EARTHQUAKE RESPONSE
         </p>
       </div>
 
